@@ -1,0 +1,249 @@
+
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <title>Saper</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>  
+
+<style>
+.board{
+	text-align:center;
+	width: 33% ;
+	margin-left: auto ;
+	margin-right: auto ;
+	margin-right: auto ;
+}
+#guzikNo1{
+	position:absolute;
+	top:70px;
+	left:50px;
+	margin-left: auto ;
+	margin-right: auto ;
+	margin-right: auto ;
+}
+
+</style>
+</head>
+<body>
+
+
+<div class="board">
+	<span id="main"></span>
+</div>
+<input id ="guzikNo1" type="image" src="9.png" alt="tryp kursoora" onclick="cursorMode();" />
+
+
+<script>
+
+<?php echo 'alert('.$_GET["data"].');'   ?>
+
+var szerokosc = 54;
+var mmode=0;
+var gameon=1;
+var ilosc_pol= 16*10;
+var Miny = new Array(18);
+var MinyOdsloniete = new Array(18);
+for(var i=0;i<18;++i){
+	Miny[i] = new Array(12);
+	MinyOdsloniete[i] = new Array(12);
+	for(var j=0;j<12;++j){
+		Miny[i][j]=0;
+		MinyOdsloniete[i][j]=0;
+	}
+}
+
+function klik(){
+	var x=Math.floor(this.id%12);
+	var y=Math.floor(this.id/12);
+	if(gameon==0) return;
+	if (mmode==1){
+		
+		if(MinyOdsloniete[y][x]==0){
+			this.style.backgroundImage = "url('flag.png')"
+			MinyOdsloniete[y][x]=2;
+		}
+		else if(MinyOdsloniete[y][x]==2){
+			this.style.backgroundImage="url('k.png')";
+			MinyOdsloniete[y][x]=0;
+		
+		}else return;
+	}else{
+
+		if (MinyOdsloniete[y][x]==2) return;
+		//window.alert(this.id);
+		
+
+		if(MinyOdsloniete[y][x]==0){
+			this.style.backgroundImage = "url('"+Miny[y][x]+".png')"; 
+			ilosc_pol--;
+			MinyOdsloniete[y][x]=1;
+		}
+		
+		
+		if(Miny[y][x]==0){
+			klik2(y-1,x+1);
+			klik2(y-1,x);
+			klik2(y-1,x-1);
+			klik2(y,x-1);
+			klik2(y,x+1);
+			klik2(y+1,x+1);
+			klik2(y+1,x);
+			klik2(y+1,x-1);	
+		}
+		if(Miny[y][x]==9 && gameon==1) {
+			var h1 = document.createElement("h1");
+			h1.innerHTML=("przegrales");
+			h1.style.color="red";
+			document.getElementById("main").appendChild(h1);
+			gameon=0;
+			odslon();
+			this.style.backgroundImage="url('mw.png')";
+		}
+		
+		
+		
+		if(ilosc_pol<=34 && gameon==1){
+			//window.location.href='win.html';
+			var h1 = document.createElement("h1");
+			h1.innerHTML=("wygrales");
+			h1.style.color="green";
+			document.getElementById("main").appendChild(h1);
+			gameon=0 ;
+		}
+	}
+}
+
+function klik2(y,x){
+	if(gameon==0) return;
+	if(x==0|| x==11 || y==0 || y==17) return;
+	
+	
+	if(MinyOdsloniete[y][x]==0){
+		document.getElementById(y*12 + x).style.backgroundImage = "url('"+Miny[y][x]+".png')";  
+		ilosc_pol--;
+		MinyOdsloniete[y][x]=1;
+		
+		if(Miny[y][x]==0){
+			klik2(y-1,x+1);
+			klik2(y-1,x);
+			klik2(y-1,x-1);
+			klik2(y,x-1);
+			klik2(y,x+1);
+			klik2(y+1,x+1);
+			klik2(y+1,x);
+			klik2(y+1,x-1);	
+		}
+		
+	}
+	
+	
+	
+	if(ilosc_pol<=34 && gameon==1){
+		//window.location.href='win.html';
+		var h1 = document.createElement("h1");
+		h1.innerHTML=("wygrales");
+		h1.style.color="green";
+		document.getElementById("main").appendChild(h1);
+		gameon=0 ;
+	}
+}
+
+
+
+for(var i=0;i<18;i++){
+	for(var j=0;j<12;j++){
+		var div = document.createElement("div");
+		div.float="left";
+		div.style.position="absolute";
+
+		div.style.top =  szerokosc*i+10+"px";
+		div.style.left = szerokosc*j+ window.innerWidth/2-6*szerokosc +"px";
+
+		div.style.width = szerokosc+"px";
+		div.style.height = szerokosc+"px";
+		div.style.backgroundImage = "url('k.png')"; 
+		div.id = i*12+j;
+		div.onclick= klik;
+		//div.style.backgroundImage.img.maxWidth = "100%";
+		
+		div.style.color = "white";
+		div.align = "center";
+		div.align = "center";
+		document.getElementById("main").appendChild(div);
+		if(i==0|| i==17 || j==0 || j==11)
+			div.style.visibility="hidden";
+	}
+}
+
+
+function odslon(){
+	var y=1;
+	var x=1
+	for(y=1;y<=16;y++){
+		if(y==0 || y==17)continue;
+		for(x=1;x<=10;x++){
+			if(x==0|| x==11 ) continue;
+			document.getElementById(y*12 + x).style.backgroundImage = "url('"+Miny[y][x]+".png')";
+		}
+	}
+}
+
+function cursorMode(){
+	if(mmode==0) {
+		mmode=1
+		document.getElementById("guzikNo1").src="flag.png"
+	}
+	else {
+	mmode=0;
+	document.getElementById("guzikNo1").src="9.png"
+	}
+}
+//tworzenie arraya
+
+//kladzenie min
+var conter=0;
+mine_placement(34);
+counting_mines();
+
+
+function mine_placement(left){
+	while (left>0){
+		var Y=Math.floor(Math.random() * 16 + 1);
+		var X=Math.floor(Math.random() * 10 + 1);
+		
+		if(Miny[Y][X]==0){
+			Miny[Y][X]=9;
+			left--;
+			conter++;
+		}
+	}
+}
+
+function counting_mines(){
+	for(var i=1;i<17;++i){
+		for(var j=1;j<11;++j){
+			if(Miny[i][j]!=9){
+				if(Miny[i-1][j-1]==9) 	Miny[i][j]++;
+				if(Miny[i-1][j]==9) 	Miny[i][j]++;
+				if(Miny[i-1][j+1]==9) 	Miny[i][j]++;
+				if(Miny[i][j-1]==9)		Miny[i][j]++;
+				if(Miny[i][j+1]==9)		Miny[i][j]++;
+				if(Miny[i+1][j-1]==9) 	Miny[i][j]++;
+				if(Miny[i+1][j]==9) 	Miny[i][j]++;
+				if(Miny[i+1][j+1]==9)	Miny[i][j]++;
+			}
+		}
+	}
+	
+}
+
+
+//34miny
+</script>
+</body>
+</html>
